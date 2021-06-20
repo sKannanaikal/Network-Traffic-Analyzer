@@ -1,3 +1,4 @@
+import pygeoip
 import optparse
 
 def readPCAP(file):
