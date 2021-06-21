@@ -2,8 +2,10 @@ import geoip2.database
 import optparse
 import pyshark
 
-def readPCAP(wireshark_capture, database):
-	for packet in wireshark_capture:
+
+
+def analyze(wireshark_capture, database):
+	for packet in wireshark_capture.sniff_continuously(packet_count=10):
 		try:
 			destination_address = packet.ip.dst
 			destination_location = locateIP(destination_address, database)
@@ -14,19 +16,24 @@ def readPCAP(wireshark_capture, database):
 			print("[-] Failed to process this packet's address")
 
 def locateIP(ip, database):
-	match = database.country(ip)
-	location = match.country.name
-	return location
+	try:
+		match = database.country(ip)
+		location = match.country.name
+		return location
+	except:
+		print('[-] Failed to identify a location for the given ip')
+		return None
 
 def main():
 	with geoip2.database.Reader('database/GeoLite2-Country.mmdb') as database:
 		print('[+] Opening up Database the software will be utilizing the GeoLite2-Country Database')
-		command = optparse.OptionParser('usage%prog -f <capture file>')
-		command.add_option('-f', dest='capture', type='string', help='specify the file that will be parsed')
-		file = command.capture
-		wireshark_capture = pyshark.FileCapture(file)
+		#command = optparse.OptionParser('usage%prog -f <capture>')
+		#command.add_option('-f', dest='capture', type='string', help='specify the file that will be parsed')
+		file = open('captures/capture1.pcapng')
+		netInt = 'en0'
+		wireshark_capture = pyshark.LiveCapture(interface=netInt)
 		print('[+] Wireshark capture found will proceed to processing the file')
-		readPCAP(wireshark_capture, database)
+		analyze(wireshark_capture, database)
 
 if __name__ == "__main__":
 	main()
