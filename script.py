@@ -2,8 +2,6 @@ import geoip2.database
 import optparse
 import pyshark
 
-
-
 def analyze(wireshark_capture, database):
 	for packet in wireshark_capture.sniff_continuously(packet_count=10):
 		try:
