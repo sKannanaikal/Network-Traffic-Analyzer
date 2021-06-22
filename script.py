@@ -3,7 +3,7 @@ import optparse
 import pyshark
 
 def analyze(wireshark_capture, database):
-	for packet in wireshark_capture.sniff_continuously(packet_count=10):
+	for packet in wireshark_capture.sniff_continuously():
 		try:
 			destination_address = packet.ip.dst
 			destination_location = locateIP(destination_address, database)
@@ -25,10 +25,10 @@ def locateIP(ip, database):
 def main():
 	with geoip2.database.Reader('database/GeoLite2-Country.mmdb') as database:
 		print('[+] Opening up Database the software will be utilizing the GeoLite2-Country Database')
-		#command = optparse.OptionParser('usage%prog -f <capture>')
-		#command.add_option('-f', dest='capture', type='string', help='specify the file that will be parsed')
-		file = open('captures/capture1.pcapng')
-		netInt = 'en0'
+		command = optparse.OptionParser()
+		command.add_option('-i', action='store', dest='interface', type='string', help='specify the interface to scan on')
+		(options, args) = command.parse_args()
+		netInt = options.interface
 		wireshark_capture = pyshark.LiveCapture(interface=netInt)
 		print('[+] Wireshark capture found will proceed to processing the file')
 		analyze(wireshark_capture, database)
