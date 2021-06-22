@@ -25,8 +25,8 @@ def locateIP(ip, database):
 def main():
 	with geoip2.database.Reader('database/GeoLite2-Country.mmdb') as database:
 		print('[+] Opening up Database the software will be utilizing the GeoLite2-Country Database')
-		#command = optparse.OptionParser('usage%prog -f <capture>')
-		#command.add_option('-f', dest='capture', type='string', help='specify the file that will be parsed')
+		#command = optparse.OptionParser('usage%prog -i <interface>')
+		#command.add_option('-fi, dest='interface', type='string', help='specify the interface that will be capturing packets')
 		file = open('captures/capture1.pcapng')
 		netInt = 'en0'
 		wireshark_capture = pyshark.LiveCapture(interface=netInt)
